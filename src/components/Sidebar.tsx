@@ -23,53 +23,171 @@ export function Sidebar({
   if (!isOpen) return null;
 
   return (
-    <div className="w-64 bg-gray-50 border-r border-gray-200 flex flex-col">
-      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+    <div
+      style={{
+        width: "16rem",
+        background: "var(--dark-gray)",
+        borderRight: "1px solid var(--medium-gray)",
+        display: "flex",
+        flexDirection: "column",
+        animation: "slideIn 0.3s ease-out",
+      }}
+    >
+      <div
+        style={{
+          padding: "1rem",
+          borderBottom: "1px solid var(--medium-gray)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <button
           onClick={onNewChat}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors flex-1"
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "var(--dark-red)";
+            e.currentTarget.style.transform = "translateY(-2px)";
+            e.currentTarget.style.boxShadow = "0 4px 12px rgba(220, 38, 38, 0.4)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "var(--primary-red)";
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            padding: "0.625rem 1rem",
+            background: "var(--primary-red)",
+            color: "white",
+            borderRadius: "0.5rem",
+            flex: 1,
+            fontWeight: "600",
+            transition: "all 0.3s ease",
+          }}
         >
-          <Plus className="w-4 h-4" />
+          <Plus style={{ width: "1rem", height: "1rem" }} />
           <span>Chat Baru</span>
         </button>
         <button
           onClick={onToggle}
-          className="ml-2 p-2 hover:bg-gray-200 rounded-lg transition-colors"
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "var(--medium-gray)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "transparent";
+          }}
+          style={{
+            marginLeft: "0.5rem",
+            padding: "0.5rem",
+            borderRadius: "0.5rem",
+            color: "var(--text-light)",
+            transition: "background 0.2s ease",
+          }}
         >
-          <X className="w-4 h-4" />
+          <X style={{ width: "1rem", height: "1rem" }} />
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-3">
+      <div
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          padding: "0.75rem",
+        }}
+      >
         {chats.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">Belum ada riwayat chat</p>
+          <div
+            style={{
+              textAlign: "center",
+              padding: "2rem 0",
+              color: "var(--text-gray)",
+            }}
+          >
+            <MessageSquare
+              style={{
+                width: "2rem",
+                height: "2rem",
+                margin: "0 auto 0.5rem",
+                opacity: 0.5,
+              }}
+            />
+            <p style={{ fontSize: "0.875rem" }}>Belum ada riwayat chat</p>
           </div>
         ) : (
-          <div className="space-y-1">
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
             {chats.map((chat) => (
               <div
                 key={chat.id}
-                className={`group flex items-center gap-2 px-3 py-3 rounded-lg cursor-pointer transition-colors ${
-                  currentChatId === chat.id
-                    ? 'bg-gray-200'
-                    : 'hover:bg-gray-200'
-                }`}
                 onClick={() => onSelectChat(chat.id)}
+                onMouseEnter={(e) => {
+                  if (currentChatId !== chat.id) {
+                    e.currentTarget.style.background = "var(--medium-gray)";
+                  }
+                  const deleteBtn = e.currentTarget.querySelector('.delete-btn') as HTMLElement;
+                  if (deleteBtn) deleteBtn.style.opacity = "1";
+                }}
+                onMouseLeave={(e) => {
+                  if (currentChatId !== chat.id) {
+                    e.currentTarget.style.background = "transparent";
+                  }
+                  const deleteBtn = e.currentTarget.querySelector('.delete-btn') as HTMLElement;
+                  if (deleteBtn) deleteBtn.style.opacity = "0";
+                }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  padding: "0.75rem",
+                  borderRadius: "0.5rem",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  background: currentChatId === chat.id ? "var(--light-gray)" : "transparent",
+                  borderLeft: currentChatId === chat.id ? "3px solid var(--primary-red)" : "3px solid transparent",
+                }}
               >
-                <MessageSquare className="w-4 h-4 flex-shrink-0 text-gray-600" />
-                <span className="flex-1 text-sm text-gray-900 truncate">
+                <MessageSquare
+                  style={{
+                    width: "1rem",
+                    height: "1rem",
+                    flexShrink: 0,
+                    color: currentChatId === chat.id ? "var(--primary-red)" : "var(--text-gray)",
+                  }}
+                />
+                <span
+                  style={{
+                    flex: 1,
+                    fontSize: "0.875rem",
+                    color: "var(--text-light)",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
                   {chat.title}
                 </span>
                 <button
+                  className="delete-btn"
                   onClick={(e) => {
                     e.stopPropagation();
                     onDeleteChat(chat.id);
                   }}
-                  className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-300 rounded transition-opacity"
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "var(--primary-red)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "var(--light-gray)";
+                  }}
+                  style={{
+                    opacity: 0,
+                    padding: "0.25rem",
+                    background: "var(--light-gray)",
+                    borderRadius: "0.25rem",
+                    transition: "all 0.2s ease",
+                  }}
                 >
-                  <Trash2 className="w-3 h-3 text-gray-600" />
+                  <Trash2 style={{ width: "0.875rem", height: "0.875rem", color: "var(--text-light)" }} />
                 </button>
               </div>
             ))}
@@ -77,10 +195,21 @@ export function Sidebar({
         )}
       </div>
 
-      <div className="p-4 border-t border-gray-200">
-        <div className="text-xs text-gray-500 text-center">
-          <p>AI Assistant v1.0</p>
-          <p className="mt-1">Production Ready</p>
+      <div
+        style={{
+          padding: "1rem",
+          borderTop: "1px solid var(--medium-gray)",
+        }}
+      >
+        <div
+          style={{
+            fontSize: "0.75rem",
+            color: "var(--text-gray)",
+            textAlign: "center",
+          }}
+        >
+          <p style={{ fontWeight: "600" }}>AI Assistant v1.0</p>
+          <p style={{ marginTop: "0.25rem", color: "var(--primary-red)" }}>Production Ready</p>
         </div>
       </div>
     </div>

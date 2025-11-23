@@ -112,7 +112,14 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen bg-white">
+    <div
+      style={{
+        display: "flex",
+        height: "100vh",
+        background: "var(--black)",
+        color: "var(--text-light)",
+      }}
+    >
       <Sidebar
         chats={chats}
         currentChatId={currentChatId}
@@ -123,13 +130,34 @@ export default function App() {
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <header className="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          overflow: "hidden",
+        }}
+      >
+        <header
+          style={{
+            borderBottom: "1px solid var(--medium-gray)",
+            padding: "1rem 1.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            background: "var(--dark-gray)",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             {!isSidebarOpen && (
               <button
                 onClick={() => setIsSidebarOpen(true)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                style={{
+                  padding: "0.5rem",
+                  background: "var(--medium-gray)",
+                  borderRadius: "0.5rem",
+                  color: "var(--text-light)",
+                }}
               >
                 <svg
                   width="20"
@@ -145,22 +173,40 @@ export default function App() {
                 </svg>
               </button>
             )}
-            <h1 className="text-gray-900">AI Assistant</h1>
+            <h1
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "700",
+                background: "linear-gradient(135deg, var(--primary-red), var(--light-red))",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              AI Assistant
+            </h1>
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto">
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            background: "var(--black)",
+          }}
+        >
           {!currentChat || currentChat.messages.length === 0 ? (
-            <WelcomeScreen
-              onSuggestionClick={handleSendMessage}
-            />
+            <WelcomeScreen onSuggestionClick={handleSendMessage} />
           ) : (
-            <div className="max-w-3xl mx-auto px-6 py-8">
+            <div
+              style={{
+                maxWidth: "56rem",
+                margin: "0 auto",
+                padding: "2rem 1.5rem",
+              }}
+            >
               {currentChat.messages.map((message) => (
-                <ChatMessage
-                  key={message.id}
-                  message={message}
-                />
+                <ChatMessage key={message.id} message={message} />
               ))}
               {isLoading && (
                 <ChatMessage
@@ -177,10 +223,7 @@ export default function App() {
           )}
         </div>
 
-        <ChatInput
-          onSend={handleSendMessage}
-          disabled={isLoading}
-        />
+        <ChatInput onSend={handleSendMessage} disabled={isLoading} />
       </div>
     </div>
   );

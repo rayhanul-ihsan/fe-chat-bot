@@ -29,38 +29,111 @@ export function WelcomeScreen({ onSuggestionClick }: WelcomeScreenProps) {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center h-full px-6 py-12">
-      <div className="max-w-3xl w-full">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl mb-6">
-            <Sparkles className="w-8 h-8 text-white" />
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+        padding: "3rem 1.5rem",
+      }}
+    >
+      <div style={{ maxWidth: "48rem", width: "100%" }}>
+        <div style={{ textAlign: "center", marginBottom: "3rem" }} className="animate-fadeIn">
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "4rem",
+              height: "4rem",
+              background: "linear-gradient(135deg, var(--primary-red), var(--dark-red))",
+              borderRadius: "1rem",
+              marginBottom: "1.5rem",
+              animation: "glow 2s ease-in-out infinite",
+            }}
+          >
+            <Sparkles style={{ width: "2rem", height: "2rem", color: "white" }} />
           </div>
-          <h2 className="text-gray-900 mb-3">
+          <h2
+            style={{
+              fontSize: "2rem",
+              fontWeight: "700",
+              color: "var(--text-light)",
+              marginBottom: "0.75rem",
+            }}
+          >
             Selamat datang di AI Assistant
           </h2>
-          <p className="text-gray-600">
+          <p style={{ color: "var(--text-gray)", fontSize: "1.125rem" }}>
             Mulai percakapan baru atau pilih salah satu saran di bawah
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "1rem",
+            marginBottom: "3rem",
+          }}
+        >
           {suggestions.map((suggestion, index) => {
             const Icon = suggestion.icon;
             return (
               <button
                 key={index}
                 onClick={() => onSuggestionClick(suggestion.description)}
-                className="group p-6 border border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all text-left"
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--primary-red)";
+                  e.currentTarget.style.background = "var(--medium-gray)";
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.boxShadow = "0 8px 20px rgba(220, 38, 38, 0.3)";
+                  const iconDiv = e.currentTarget.querySelector('.icon-div') as HTMLElement;
+                  if (iconDiv) iconDiv.style.background = "var(--primary-red)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--light-gray)";
+                  e.currentTarget.style.background = "var(--dark-gray)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                  const iconDiv = e.currentTarget.querySelector('.icon-div') as HTMLElement;
+                  if (iconDiv) iconDiv.style.background = "var(--light-gray)";
+                }}
+                style={{
+                  padding: "1.5rem",
+                  border: "1px solid var(--light-gray)",
+                  borderRadius: "0.75rem",
+                  transition: "all 0.3s ease",
+                  textAlign: "left",
+                  background: "var(--dark-gray)",
+                  cursor: "pointer",
+                }}
               >
-                <div className="flex items-start gap-4">
-                  <div className="p-2 bg-blue-100 group-hover:bg-blue-600 rounded-lg transition-colors">
-                    <Icon className="w-5 h-5 text-blue-600 group-hover:text-white transition-colors" />
+                <div style={{ display: "flex", alignItems: "start", gap: "1rem" }}>
+                  <div
+                    className="icon-div"
+                    style={{
+                      padding: "0.625rem",
+                      background: "var(--light-gray)",
+                      borderRadius: "0.5rem",
+                      transition: "all 0.3s ease",
+                    }}
+                  >
+                    <Icon style={{ width: "1.25rem", height: "1.25rem", color: "var(--primary-red)" }} />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-gray-900 mb-1">
+                  <div style={{ flex: 1 }}>
+                    <h3
+                      style={{
+                        color: "var(--text-light)",
+                        marginBottom: "0.5rem",
+                        fontWeight: "600",
+                      }}
+                    >
                       {suggestion.title}
                     </h3>
-                    <p className="text-sm text-gray-600">
+                    <p style={{ fontSize: "0.875rem", color: "var(--text-gray)" }}>
                       {suggestion.description}
                     </p>
                   </div>
@@ -70,14 +143,39 @@ export function WelcomeScreen({ onSuggestionClick }: WelcomeScreenProps) {
           })}
         </div>
 
-        <div className="mt-12 p-6 bg-gray-50 border border-gray-200 rounded-xl">
-          <h3 className="text-gray-900 mb-2">
-            💡 Tips
+        <div
+          style={{
+            padding: "1.5rem",
+            background: "var(--dark-gray)",
+            border: "1px solid var(--medium-gray)",
+            borderRadius: "0.75rem",
+          }}
+        >
+          <h3
+            style={{
+              color: "var(--text-light)",
+              marginBottom: "0.75rem",
+              fontWeight: "600",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+            }}
+          >
+            <span style={{ fontSize: "1.25rem" }}>💡</span> Tips
           </h3>
-          <ul className="space-y-2 text-sm text-gray-600">
-            <li>• Jelaskan pertanyaan Anda dengan detail untuk mendapat jawaban terbaik</li>
-            <li>• Gunakan Shift + Enter untuk baris baru</li>
-            <li>• Semua riwayat chat tersimpan di sidebar</li>
+          <ul style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <li style={{ fontSize: "0.875rem", color: "var(--text-gray)", display: "flex", alignItems: "start" }}>
+              <span style={{ color: "var(--primary-red)", marginRight: "0.5rem" }}>•</span>
+              <span>Jelaskan pertanyaan Anda dengan detail untuk mendapat jawaban terbaik</span>
+            </li>
+            <li style={{ fontSize: "0.875rem", color: "var(--text-gray)", display: "flex", alignItems: "start" }}>
+              <span style={{ color: "var(--primary-red)", marginRight: "0.5rem" }}>•</span>
+              <span>Gunakan Shift + Enter untuk baris baru</span>
+            </li>
+            <li style={{ fontSize: "0.875rem", color: "var(--text-gray)", display: "flex", alignItems: "start" }}>
+              <span style={{ color: "var(--primary-red)", marginRight: "0.5rem" }}>•</span>
+              <span>Semua riwayat chat tersimpan di sidebar</span>
+            </li>
           </ul>
         </div>
       </div>

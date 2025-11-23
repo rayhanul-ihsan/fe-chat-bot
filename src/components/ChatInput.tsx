@@ -8,6 +8,7 @@ interface ChatInputProps {
 
 export function ChatInput({ onSend, disabled }: ChatInputProps) {
   const [input, setInput] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleSubmit = () => {
     if (input.trim() && !disabled) {
@@ -24,30 +25,85 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   };
 
   return (
-    <div className="border-t border-gray-200 bg-white">
-      <div className="max-w-3xl mx-auto px-6 py-4">
-        <div className="flex gap-3 items-end">
-          <div className="flex-1 relative">
+    <div
+      style={{
+        borderTop: "1px solid var(--medium-gray)",
+        background: "var(--dark-gray)",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "48rem",
+          margin: "0 auto",
+          padding: "1rem 1.5rem",
+        }}
+      >
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "end" }}>
+          <div style={{ flex: 1, position: "relative" }}>
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
               placeholder="Ketik pesan Anda di sini..."
               disabled={disabled}
               rows={1}
-              className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed max-h-32"
-              style={{ minHeight: '52px' }}
+              style={{
+                width: "100%",
+                padding: "0.875rem 1rem",
+                border: `2px solid ${isFocused ? "var(--primary-red)" : "var(--light-gray)"}`,
+                borderRadius: "0.75rem",
+                resize: "none",
+                background: "var(--medium-gray)",
+                color: "var(--text-light)",
+                fontSize: "1rem",
+                minHeight: "3.25rem",
+                maxHeight: "8rem",
+                transition: "all 0.3s ease",
+                boxShadow: isFocused ? "0 0 0 3px rgba(220, 38, 38, 0.1)" : "none",
+              }}
             />
           </div>
           <button
             onClick={handleSubmit}
             disabled={!input.trim() || disabled}
-            className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+            onMouseEnter={(e) => {
+              if (!disabled && input.trim()) {
+                e.currentTarget.style.background = "var(--dark-red)";
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 6px 16px rgba(220, 38, 38, 0.4)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!disabled && input.trim()) {
+                e.currentTarget.style.background = "var(--primary-red)";
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(220, 38, 38, 0.3)";
+              }
+            }}
+            style={{
+              padding: "0.875rem",
+              background: !input.trim() || disabled ? "var(--light-gray)" : "var(--primary-red)",
+              color: "white",
+              borderRadius: "0.75rem",
+              transition: "all 0.3s ease",
+              flexShrink: 0,
+              cursor: !input.trim() || disabled ? "not-allowed" : "pointer",
+              boxShadow: !input.trim() || disabled ? "none" : "0 4px 12px rgba(220, 38, 38, 0.3)",
+            }}
           >
-            <Send className="w-5 h-5" />
+            <Send style={{ width: "1.25rem", height: "1.25rem" }} />
           </button>
         </div>
-        <p className="text-xs text-gray-500 mt-2 text-center">
+        <p
+          style={{
+            fontSize: "0.75rem",
+            color: "var(--text-gray)",
+            marginTop: "0.5rem",
+            textAlign: "center",
+          }}
+        >
           AI dapat membuat kesalahan. Mohon verifikasi informasi penting.
         </p>
       </div>

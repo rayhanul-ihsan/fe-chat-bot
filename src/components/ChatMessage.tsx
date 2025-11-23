@@ -10,29 +10,90 @@ export function ChatMessage({ message, isLoading }: ChatMessageProps) {
   const isAssistant = message.role === 'assistant';
 
   return (
-    <div className={`flex gap-4 mb-6 ${isAssistant ? '' : ''}`}>
-      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-        isAssistant ? 'bg-blue-600' : 'bg-gray-900'
-      }`}>
+    <div
+      className="animate-fadeIn"
+      style={{
+        display: "flex",
+        gap: "1rem",
+        marginBottom: "1.5rem",
+      }}
+    >
+      <div
+        style={{
+          flexShrink: 0,
+          width: "2.5rem",
+          height: "2.5rem",
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: isAssistant
+            ? "linear-gradient(135deg, var(--primary-red), var(--dark-red))"
+            : "linear-gradient(135deg, var(--light-gray), var(--medium-gray))",
+          boxShadow: isAssistant
+            ? "0 4px 12px rgba(220, 38, 38, 0.3)"
+            : "0 4px 12px rgba(0, 0, 0, 0.2)",
+        }}
+      >
         {isAssistant ? (
-          <Bot className="w-5 h-5 text-white" />
+          <Bot style={{ width: "1.25rem", height: "1.25rem", color: "white" }} />
         ) : (
-          <User className="w-5 h-5 text-white" />
+          <User style={{ width: "1.25rem", height: "1.25rem", color: "white" }} />
         )}
       </div>
 
-      <div className="flex-1 space-y-2 pt-1">
-        <div className="text-sm text-gray-900">
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "0.5rem", paddingTop: "0.25rem" }}>
+        <div
+          style={{
+            fontSize: "0.875rem",
+            fontWeight: "600",
+            color: isAssistant ? "var(--primary-red)" : "var(--text-light)",
+          }}
+        >
           {isAssistant ? 'AI Assistant' : 'Anda'}
         </div>
         {isLoading ? (
-          <div className="flex gap-1">
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+          <div style={{ display: "flex", gap: "0.375rem" }}>
+            <div
+              className="animate-bounce"
+              style={{
+                width: "0.5rem",
+                height: "0.5rem",
+                background: "var(--primary-red)",
+                borderRadius: "50%",
+                animationDelay: "0ms",
+              }}
+            />
+            <div
+              className="animate-bounce"
+              style={{
+                width: "0.5rem",
+                height: "0.5rem",
+                background: "var(--primary-red)",
+                borderRadius: "50%",
+                animationDelay: "150ms",
+              }}
+            />
+            <div
+              className="animate-bounce"
+              style={{
+                width: "0.5rem",
+                height: "0.5rem",
+                background: "var(--primary-red)",
+                borderRadius: "50%",
+                animationDelay: "300ms",
+              }}
+            />
           </div>
         ) : (
-          <div className="text-gray-800 whitespace-pre-wrap break-words">
+          <div
+            style={{
+              color: "var(--text-light)",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+              lineHeight: "1.6",
+            }}
+          >
             {message.content}
           </div>
         )}
