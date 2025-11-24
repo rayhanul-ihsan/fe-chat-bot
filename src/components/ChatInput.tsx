@@ -3,17 +3,36 @@ import { PlusIcon, Send } from "lucide-react";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
+  onFileUpload: any;
   disabled?: boolean;
 }
 
-export function ChatInput({ onSend, disabled }: ChatInputProps) {
+export function ChatInput({ onSend, onFileUpload, disabled }: ChatInputProps) {
   const [input, setInput] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const handleSubmit = () => {
     if (input.trim() && !disabled) {
       onSend(input);
       setInput("");
+    }
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    setIsUploading(true);
+    try {
+      await onFileUpload(file);
+      alert(`Dokumen "${file.name}" berhasil diupload dan diindex!`);
+    } catch (error) {
+      console.error("Upload error:", error);
+    } finally {
+      setIsUploading(false);
+      // Reset input file
+      event.target.value = "";
     }
   };
 
@@ -42,16 +61,25 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           
           {/* === Input File === */}
           <label
-            className="relative cursor-pointer flex items-center justify-center "
+            style={{
+              cursor: isUploading ? "not-allowed" : "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0.875rem",
+              background: isUploading ? "var(--light-gray)" : "var(--medium-gray)",
+              borderRadius: "0.75rem",
+              color: "var(--text-light)",
+              transition: "all 0.2s ease",
+            }}
           >
-            <PlusIcon />
+            <PlusIcon style={{ width: "1.25rem", height: "1.25rem" }} />
             <input
-            style={{display: 'none'}}
+              style={{ display: 'none' }}
               type="file"
-              className="absolute inset-0 opacity-0 cursor-pointer"
-              onChange={(e) => {
-                console.log("file selected:", e.target.files?.[0]);
-              }}
+              accept=".pdf,.docx,.csv,.txt"
+              onChange={handleFileChange}
+              disabled={isUploading || disabled}
             />
           </label>
 
@@ -63,8 +91,8 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
               onKeyDown={handleKeyDown}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              placeholder="Ketik pesan Anda di sini..."
-              disabled={disabled}
+              placeholder={isUploading ? "Uploading document..." : "Ketik pesan Anda di sini..."}
+              disabled={disabled || isUploading}
               rows={1}
               style={{
                 width: "100%",
@@ -90,20 +118,20 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           {/* === Button Send === */}
           <button
             onClick={handleSubmit}
-            disabled={!input.trim() || disabled}
+            disabled={!input.trim() || disabled || isUploading}
             style={{
               padding: "0.875rem",
               background:
-                !input.trim() || disabled
+                !input.trim() || disabled || isUploading
                   ? "var(--light-gray)"
                   : "var(--primary-red)",
               color: "white",
               borderRadius: "0.75rem",
               transition: "all 0.2s ease",
               flexShrink: 0,
-              cursor: !input.trim() || disabled ? "not-allowed" : "pointer",
+              cursor: !input.trim() || disabled || isUploading ? "not-allowed" : "pointer",
               boxShadow:
-                !input.trim() || disabled
+                !input.trim() || disabled || isUploading
                   ? "none"
                   : "0 4px 12px rgba(220, 38, 38, 0.25)",
             }}
@@ -120,7 +148,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
             textAlign: "center",
           }}
         >
-          AI dapat membuat kesalahan. Mohon verifikasi informasi penting.
+          {isUploading ? "Uploading and indexing document..." : "AI dapat membuat kesalahan. Mohon verifikasi informasi penting."}
         </p>
       </div>
     </div>

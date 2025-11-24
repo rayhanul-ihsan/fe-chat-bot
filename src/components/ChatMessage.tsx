@@ -1,4 +1,4 @@
-import { Bot, User } from 'lucide-react';
+import { Bot, User, FileText } from 'lucide-react';
 import type { Message } from '../App';
 
 interface ChatMessageProps {
@@ -86,16 +86,49 @@ export function ChatMessage({ message, isLoading }: ChatMessageProps) {
             />
           </div>
         ) : (
-          <div
-            style={{
-              color: "var(--text-light)",
-              whiteSpace: "pre-wrap",
-              wordBreak: "break-word",
-              lineHeight: "1.6",
-            }}
-          >
-            {message.content}
-          </div>
+          <>
+            <div
+              style={{
+                color: "var(--text-light)",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                lineHeight: "1.6",
+              }}
+            >
+              {message.content}
+            </div>
+            
+            {/* Display Sources */}
+            {message.sources && message.sources.length > 0 && (
+              <div style={{ marginTop: "0.75rem" }}>
+                <div style={{ fontSize: "0.75rem", color: "var(--text-gray)", marginBottom: "0.5rem", fontWeight: "600" }}>
+                  <FileText style={{ width: "0.875rem", height: "0.875rem", display: "inline", marginRight: "0.25rem" }} />
+                  Sumber Referensi:
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  {message.sources.slice(0, 3).map((source, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        padding: "0.75rem",
+                        background: "var(--dark-gray)",
+                        borderLeft: "3px solid var(--primary-red)",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.8rem",
+                      }}
+                    >
+                      <div style={{ color: "var(--text-gray)", marginBottom: "0.25rem" }}>
+                        Halaman {source.payload.page} • Skor: {(source.score * 100).toFixed(1)}%
+                      </div>
+                      <div style={{ color: "var(--text-light)", fontSize: "0.75rem", lineHeight: "1.4" }}>
+                        {source.text.slice(0, 200)}...
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

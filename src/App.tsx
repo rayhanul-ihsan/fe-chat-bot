@@ -3,12 +3,19 @@ import { WelcomeScreen } from "./components/WelcomeScreen";
 import { ChatMessage } from "./components/ChatMessage";
 import { ChatInput } from "./components/ChatInput";
 import { Sidebar } from "./components/Sidebar";
+import { chatAPI } from "./api";
 import "./styles/globals.css";
+
 export interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  sources?: Array<{
+    text: string;
+    payload: { page: number };
+    score: number;
+  }>;
 }
 
 export interface Chat {
@@ -16,19 +23,50 @@ export interface Chat {
   title: string;
   messages: Message[];
   timestamp: Date;
+  docId?: string; // Tambahkan doc_id untuk setiap chat
 }
 
 export default function App() {
   const [chats, setChats] = useState<Chat[]>([]);
-  const [currentChatId, setCurrentChatId] = useState<
-    string | null
-  >(null);
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [currentDocId, setCurrentDocId] = useState<string | null>(null);
 
-  const currentChat = chats.find(
-    (chat) => chat.id === currentChatId,
-  );
+  const currentChat = chats.find((chat) => chat.id === currentChatId);
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      setIsLoading(true);
+      
+      // Upload document
+      const uploadResult = await chatAPI.uploadDocument(file);
+      console.log("Upload success:", uploadResult);
+      
+      // Set current doc_id
+      setCurrentDocId(uploadResult.doc_id);
+      
+      // Create new chat with doc_id
+      const chatId = Date.now().toString();
+      const newChat: Chat = {
+        id: chatId,
+        title: file.name,
+        messages: [],
+        timestamp: new Date(),
+        docId: uploadResult.doc_id,
+      };
+      setChats((prev) => [newChat, ...prev]);
+      setCurrentChatId(chatId);
+      
+      return uploadResult;
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Gagal upload dokumen. Silakan coba lagi.");
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSendMessage = async (content: string) => {
     if (!content.trim()) return;
@@ -40,11 +78,10 @@ export default function App() {
       chatId = Date.now().toString();
       const newChat: Chat = {
         id: chatId,
-        title:
-          content.slice(0, 30) +
-          (content.length > 30 ? "..." : ""),
+        title: content.slice(0, 30) + (content.length > 30 ? "..." : ""),
         messages: [],
         timestamp: new Date(),
+        docId: currentDocId || undefined,
       };
       setChats((prev) => [newChat, ...prev]);
       setCurrentChatId(chatId);
@@ -65,19 +102,21 @@ export default function App() {
               ...chat,
               messages: [...chat.messages, userMessage],
             }
-          : chat,
-      ),
+          : chat
+      )
     );
 
-    // Simulate AI response
+    // Call API
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      const response = await chatAPI.sendMessage(content);
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content:
-          "Ini adalah contoh respons dari AI assistant. Dalam implementasi production, Anda dapat mengintegrasikan dengan API AI seperti OpenAI, Anthropic, atau model AI lainnya.",
+        content: response.response,
         timestamp: new Date(),
+        sources: response.sources,
       };
 
       setChats((prev) =>
@@ -87,11 +126,32 @@ export default function App() {
                 ...chat,
                 messages: [...chat.messages, assistantMessage],
               }
-            : chat,
-        ),
+            : chat
+        )
       );
+    } catch (error) {
+      console.error("Chat error:", error);
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Maaf, terjadi kesalahan. Silakan coba lagi.",
+        timestamp: new Date(),
+      };
+
+      setChats((prev) =>
+        prev.map((chat) =>
+          chat.id === chatId
+            ? {
+                ...chat,
+                messages: [...chat.messages, errorMessage],
+              }
+            : chat
+        )
+      );
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleNewChat = () => {
@@ -100,12 +160,14 @@ export default function App() {
 
   const handleSelectChat = (chatId: string) => {
     setCurrentChatId(chatId);
+    const selectedChat = chats.find((c) => c.id === chatId);
+    if (selectedChat?.docId) {
+      setCurrentDocId(selectedChat.docId);
+    }
   };
 
   const handleDeleteChat = (chatId: string) => {
-    setChats((prev) =>
-      prev.filter((chat) => chat.id !== chatId),
-    );
+    setChats((prev) => prev.filter((chat) => chat.id !== chatId));
     if (currentChatId === chatId) {
       setCurrentChatId(null);
     }
@@ -223,7 +285,11 @@ export default function App() {
           )}
         </div>
 
-        <ChatInput onSend={handleSendMessage} disabled={isLoading} />
+        <ChatInput 
+          onSend={handleSendMessage} 
+          onFileUpload={handleFileUpload}
+          disabled={isLoading} 
+        />
       </div>
     </div>
   );
