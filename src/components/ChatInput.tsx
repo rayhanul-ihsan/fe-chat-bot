@@ -1,5 +1,5 @@
-import { useState, type KeyboardEvent } from 'react';
-import { Send } from 'lucide-react';
+import { useState, type KeyboardEvent } from "react";
+import { PlusIcon, Send } from "lucide-react";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
@@ -7,18 +7,18 @@ interface ChatInputProps {
 }
 
 export function ChatInput({ onSend, disabled }: ChatInputProps) {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
   const handleSubmit = () => {
     if (input.trim() && !disabled) {
       onSend(input);
-      setInput('');
+      setInput("");
     }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
     }
@@ -38,8 +38,25 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           padding: "1rem 1.5rem",
         }}
       >
-        <div style={{ display: "flex", gap: "0.75rem", alignItems: "end" }}>
-          <div style={{ flex: 1, position: "relative" }}>
+        <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+          
+          {/* === Input File === */}
+          <label
+            className="relative cursor-pointer flex items-center justify-center "
+          >
+            <PlusIcon />
+            <input
+            style={{display: 'none'}}
+              type="file"
+              className="absolute inset-0 opacity-0 cursor-pointer"
+              onChange={(e) => {
+                console.log("file selected:", e.target.files?.[0]);
+              }}
+            />
+          </label>
+
+          {/* === Textarea === */}
+          <div style={{ flex: 1 }}>
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -52,7 +69,9 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
               style={{
                 width: "100%",
                 padding: "0.875rem 1rem",
-                border: `2px solid ${isFocused ? "var(--primary-red)" : "var(--light-gray)"}`,
+                border: `2px solid ${
+                  isFocused ? "var(--primary-red)" : "var(--light-gray)"
+                }`,
                 borderRadius: "0.75rem",
                 resize: "none",
                 background: "var(--medium-gray)",
@@ -60,42 +79,39 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
                 fontSize: "1rem",
                 minHeight: "3.25rem",
                 maxHeight: "8rem",
-                transition: "all 0.3s ease",
-                boxShadow: isFocused ? "0 0 0 3px rgba(220, 38, 38, 0.1)" : "none",
+                transition: "all 0.2s ease",
+                boxShadow: isFocused
+                  ? "0 0 0 3px rgba(220, 38, 38, 0.15)"
+                  : "none",
               }}
             />
           </div>
+
+          {/* === Button Send === */}
           <button
             onClick={handleSubmit}
             disabled={!input.trim() || disabled}
-            onMouseEnter={(e) => {
-              if (!disabled && input.trim()) {
-                e.currentTarget.style.background = "var(--dark-red)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow = "0 6px 16px rgba(220, 38, 38, 0.4)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!disabled && input.trim()) {
-                e.currentTarget.style.background = "var(--primary-red)";
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 4px 12px rgba(220, 38, 38, 0.3)";
-              }
-            }}
             style={{
               padding: "0.875rem",
-              background: !input.trim() || disabled ? "var(--light-gray)" : "var(--primary-red)",
+              background:
+                !input.trim() || disabled
+                  ? "var(--light-gray)"
+                  : "var(--primary-red)",
               color: "white",
               borderRadius: "0.75rem",
-              transition: "all 0.3s ease",
+              transition: "all 0.2s ease",
               flexShrink: 0,
               cursor: !input.trim() || disabled ? "not-allowed" : "pointer",
-              boxShadow: !input.trim() || disabled ? "none" : "0 4px 12px rgba(220, 38, 38, 0.3)",
+              boxShadow:
+                !input.trim() || disabled
+                  ? "none"
+                  : "0 4px 12px rgba(220, 38, 38, 0.25)",
             }}
           >
             <Send style={{ width: "1.25rem", height: "1.25rem" }} />
           </button>
         </div>
+
         <p
           style={{
             fontSize: "0.75rem",
