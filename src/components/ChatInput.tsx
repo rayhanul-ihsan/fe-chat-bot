@@ -26,7 +26,6 @@ export function ChatInput({ onSend, onFileUpload, disabled }: ChatInputProps) {
     setIsUploading(true);
     try {
       await onFileUpload(file);
-      alert(`Dokumen "${file.name}" berhasil diupload dan diindex!`);
     } catch (error) {
       console.error("Upload error:", error);
     } finally {
@@ -148,7 +147,7 @@ export function ChatInput({ onSend, onFileUpload, disabled }: ChatInputProps) {
             textAlign: "center",
           }}
         >
-          {isUploading ? "Uploading and indexing document..." : "AI dapat membuat kesalahan. Mohon verifikasi informasi penting."}
+          {isUploading ? "Uploading document..." : "AI dapat membuat kesalahan. Mohon verifikasi informasi penting."}
         </p>
       </div>
     </div>

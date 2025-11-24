@@ -84,6 +84,7 @@ export function Sidebar({
             borderRadius: "0.5rem",
             color: "var(--text-light)",
             transition: "background 0.2s ease",
+            backgroundColor: "transparent",
           }}
         >
           <X style={{ width: "1rem", height: "1rem" }} />
@@ -208,7 +209,7 @@ export function Sidebar({
             textAlign: "center",
           }}
         >
-          <p style={{ fontWeight: "600" }}>AI Assistant v1.0</p>
+          <p style={{ fontWeight: "600" }}>Chat Bot v1.0</p>
           <p style={{ marginTop: "0.25rem", color: "var(--primary-red)" }}>Production Ready</p>
         </div>
       </div>

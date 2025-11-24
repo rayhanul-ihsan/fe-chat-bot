@@ -1,9 +1,10 @@
 import { useState } from "react";
+import toast, { Toaster } from 'react-hot-toast';
 import { WelcomeScreen } from "./components/WelcomeScreen";
 import { ChatMessage } from "./components/ChatMessage";
 import { ChatInput } from "./components/ChatInput";
 import { Sidebar } from "./components/Sidebar";
-import { chatAPI } from "./api";
+import { chatAPI } from "./services/api";
 import "./styles/globals.css";
 
 export interface Message {
@@ -23,7 +24,7 @@ export interface Chat {
   title: string;
   messages: Message[];
   timestamp: Date;
-  docId?: string; // Tambahkan doc_id untuk setiap chat
+  docId?: string;
 }
 
 export default function App() {
@@ -36,6 +37,7 @@ export default function App() {
   const currentChat = chats.find((chat) => chat.id === currentChatId);
 
   const handleFileUpload = async (file: File) => {
+    const toastId = toast.loading(`Mengupload ${file.name}...`);
     try {
       setIsLoading(true);
       
@@ -58,10 +60,11 @@ export default function App() {
       setChats((prev) => [newChat, ...prev]);
       setCurrentChatId(chatId);
       
+      toast.success(`${file.name} berhasil diupload!`, { id: toastId });
       return uploadResult;
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Gagal upload dokumen. Silakan coba lagi.");
+      toast.error("Gagal upload dokumen. Silakan coba lagi.", { id: toastId });
       throw error;
     } finally {
       setIsLoading(false);
@@ -131,6 +134,7 @@ export default function App() {
       );
     } catch (error) {
       console.error("Chat error:", error);
+      toast.error("Maaf, terjadi kesalahan. Silakan coba lagi.");
       
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -171,6 +175,7 @@ export default function App() {
     if (currentChatId === chatId) {
       setCurrentChatId(null);
     }
+    toast.success("Chat berhasil dihapus");
   };
 
   return (
@@ -182,6 +187,35 @@ export default function App() {
         color: "var(--text-light)",
       }}
     >
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: {
+            background: 'var(--dark-gray)',
+            color: 'var(--text-light)',
+            border: '1px solid var(--medium-gray)',
+          },
+          success: {
+            iconTheme: {
+              primary: 'var(--primary-red)',
+              secondary: 'white',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: 'white',
+            },
+          },
+          loading: {
+            iconTheme: {
+              primary: 'var(--primary-red)',
+              secondary: 'white',
+            },
+          },
+        }}
+      />
+      
       <Sidebar
         chats={chats}
         currentChatId={currentChatId}
@@ -245,7 +279,7 @@ export default function App() {
                 backgroundClip: "text",
               }}
             >
-              AI Assistant
+              Chat Bot
             </h1>
           </div>
         </header>

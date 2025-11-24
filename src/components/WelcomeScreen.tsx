@@ -8,23 +8,8 @@ export function WelcomeScreen({ onSuggestionClick }: WelcomeScreenProps) {
   const suggestions = [
     {
       icon: Code,
-      title: 'Bantuan Coding',
-      description: 'Bantu saya menulis kode atau debug program',
-    },
-    {
-      icon: Lightbulb,
-      title: 'Brainstorming Ide',
-      description: 'Diskusikan ide kreatif untuk proyek saya',
-    },
-    {
-      icon: FileText,
-      title: 'Tulis Konten',
-      description: 'Buat artikel, email, atau konten lainnya',
-    },
-    {
-      icon: Sparkles,
-      title: 'Jelaskan Konsep',
-      description: 'Bantu saya memahami topik yang kompleks',
+      title: 'Bantuan Dalam Ringkasan Dokumen',
+      description: 'Bantu saya untuk analisis dokument itu',
     },
   ];
 
@@ -64,7 +49,7 @@ export function WelcomeScreen({ onSuggestionClick }: WelcomeScreenProps) {
               marginBottom: "0.75rem",
             }}
           >
-            Selamat datang di AI Assistant
+            Selamat datang di Chat Bot
           </h2>
           <p style={{ color: "var(--text-gray)", fontSize: "1.125rem" }}>
             Mulai percakapan baru atau pilih salah satu saran di bawah
